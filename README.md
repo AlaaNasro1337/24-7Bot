@@ -1,2 +1,2 @@
-# Ninjitsu-Bot
-A Node.js experiment with Heroku and discord.js
+# GalaxyBot
+Bot for discord using Heroku.

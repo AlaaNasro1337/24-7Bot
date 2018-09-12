@@ -1,1 +1,1 @@
-worker: npm start
+worker: node bot2.js
