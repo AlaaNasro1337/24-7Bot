@@ -69,64 +69,7 @@ client.on("message", async message => {
     message.channel.send(sayMessage);
   }
   
-  if(command === "kick") {
-    // This command must be limited to mods and admins. In this example we just hardcode the role names.
-    // Please read on Array.some() to understand this bit: 
-    // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/some?
-    if(!message.member.roles.some(r=>["Administrator", "Moderator"].includes(r.name)) )
-      return message.reply("Sorry, you don't have permissions to use this!");
-    
-    // Let's first check if we have a member and if we can kick them!
-    // message.mentions.members is a collection of people that have been mentioned, as GuildMembers.
-    // We can also support getting the member by ID, which would be args[0]
-    let member = message.mentions.members.first() || message.guild.members.get(args[0]);
-    if(!member)
-      return message.reply("Please mention a valid member of this server");
-    if(!member.kickable) 
-      return message.reply("I cannot kick this user! Do they have a higher role? Do I have kick permissions?");
-    
-    // slice(1) removes the first part, which here should be the user mention or ID
-    // join(' ') takes all the various parts to make it a single string.
-    let reason = args.slice(1).join(' ');
-    if(!reason) reason = "No reason provided";
-    
-    // Now, time for a swift kick in the nuts!
-    await member.kick(reason)
-      .catch(error => message.reply(`Sorry ${message.author} I couldn't kick because of : ${error}`));
-      const embed = new Discord.RichEmbed()
-      .setAuthor(message.author.username)
-      .setTitle('User Kicked')
-      .setColor(0x32CD32)
-      .setDescription(user.username + " has been kicked by " + `**${message.author.username}** `)
-      .setThumbnail("http://oi66.tinypic.com/2zeecu1.jpg")
-      message.channel.sendEmbed(embed);
-
-  }
-
-  if (command == "mute") { // creates the command mute
-    if(!message.member.roles.some(r=>["Administrator"].includes(r.name)) ) return message.reply("Sorry, you do not have the permission to do this!"); // if author has no perms
-    var mutedmember = message.mentions.members.first(); // sets the mentioned user to the var kickedmember
-    if (!mutedmember) return message.reply("Please mention a valid member of this server!") // if there is no kickedmmeber var
-    if (mutedmember.hasPermission("ADMINISTRATOR")) return message.reply("I cannot mute this member!") // if memebr is an admin
-    var mutereasondelete = 10 + mutedmember.user.id.length //sets the length of the kickreasondelete
-    var mutereason = message.content.substring(mutereasondelete).split(" "); // deletes the first letters until it reaches the reason
-    var mutereason = mutereason.join(" "); // joins the list kickreason into one line
-    if (!mutereason) return message.reply("Please indicate a reason for the mute!") // if no reason
-    mutedmember.addRole(mutedrole) //if reason, kick
-        .catch(error => message.reply(`Sorry ${message.author} I couldn't mute because of : ${error}`)); //if error, display error
-    message.reply(`${mutedmember.user} has been muted by ${message.author} because: ${mutereason}`); // sends a message saying he was kicked
-}
-
-if (command == "unmute") { // creates the command unmute
-  if(!message.member.roles.some(r=>["Administrator"].includes(r.name)) )) return message.reply("Sorry, you do not have the permission to do this!"); // if author has no perms
-    var unmutedmember = message.mentions.members.first(); // sets the mentioned user to the var kickedmember
-    if (!unmutedmember) return message.reply("Please mention a valid member of this server!") // if there is no kickedmmeber var
-    unmutedmember.removeRole(mutedrole) //if reason, kick
-        .catch(error => message.reply(`Sorry ${message.author} I couldn't mute because of : ${error}`)); //if error, display error
-    message.reply(`${unmutedmember.user} has been unmuted by ${message.author}!`); // sends a message saying he was kicked
-}
-
-
+ 
   if (command === "help") { // creates a command *help
     var embedhelpmember = new Discord.RichEmbed() // sets a embed box to the variable embedhelpmember
         .setTitle("**Help Center**\n") // sets the title to List of Commands
@@ -153,8 +96,34 @@ if (command == "unmute") { // creates the command unmute
 }
 
 if (command == "info") { // creates the command *info
-  message.channel.send(`Hey! My name is GalaxyBot and I'm here to assist you! You can do c-help to see all of my commands! If you have any problems with the me, you can contact an my owner.`) // gives u info
+  message.channel.send(`Hey! My name is CupidRoom and I'm here to assist you! You can do c-help to see all of my commands! If you have any problems with the me, you can contact an my owner.`) // gives u info
 }
+
+
+
+ if (command == "mute") { // creates the command mute
+     if (!message.member.roles.some(r=>["Administrator"].includes(r.name)) ) return message.reply("Sorry, you do not have the permission to do this!"); // if author has no perms
+     var mutedmember = message.mentions.members.first(); // sets the mentioned user to the var kickedmember
+     if (!mutedmember) return message.reply("Please mention a valid member of this server!") // if there is no kickedmmeber var
+     if (mutedmember.hasPermission("ADMINISTRATOR")) return message.reply("I cannot mute this member!") // if memebr is an admin
+     var mutereasondelete = 10 + mutedmember.user.id.length //sets the length of the kickreasondelete
+     var mutereason = message.content.substring(mutereasondelete).split(" "); // deletes the first letters until it reaches the reason
+     var mutereason = mutereason.join(" "); // joins the list kickreason into one line
+     if (!mutereason) return message.reply("Please indicate a reason for the mute!") // if no reason
+     mutedmember.addRole(mutedrole) //if reason, kick
+         .catch(error => message.reply(`Sorry ${message.author} I couldn't mute because of : ${error}`)); //if error, display error
+     message.reply(`${mutedmember.user} has been muted by ${message.author} because: ${mutereason}`); // sends a message saying he was kicked
+ }
+
+ if (command == "unmute") { // creates the command unmute
+     if (!message.member.roles.some(r=>["Administrator"].includes(r.name)) ) return message.reply("Sorry, you do not have the permission to do this!"); // if author has no perms
+     var unmutedmember = message.mentions.members.first(); // sets the mentioned user to the var kickedmember
+     if (!unmutedmember) return message.reply("Please mention a valid member of this server!") // if there is no kickedmmeber var
+     unmutedmember.removeRole(mutedrole) //if reason, kick
+         .catch(error => message.reply(`Sorry ${message.author} I couldn't mute because of : ${error}`)); //if error, display error
+     message.reply(`${unmutedmember.user} has been unmuted by ${message.author}!`); // sends a message saying he was kicked
+ }
+
 
 
 if (command === "myinfo") {
@@ -182,33 +151,80 @@ if (command === "myinfo") {
 
 
 
-  if(command === "ban") {
-    // Most of this command is identical to kick, except that here we'll only let admins do it.
-    // In the real world mods could ban too, but this is just an example, right? ;)
-    if(!message.member.roles.some(r=>["Administrator"].includes(r.name)) )
-      return message.reply("Sorry, you don't have permissions to use this!");
-    
-    let member = message.mentions.members.first();
-    if(!member)
-      return message.reply("Please mention a valid member of this server");
-    if(!member.bannable) 
-      return message.reply("I cannot ban this user! Do they have a higher role? Do I have ban permissions?");
-
+ if (command === "kick") {
+  if (message.member.hasPermission("KICK_MEMBERS")) {
     let reason = args.slice(1).join(' ');
-    if(!reason) reason = "No reason provided";
-    
-    await member.ban(reason)
-      .catch(error => message.reply(`Sorry ${message.author} I couldn't ban because of : ${error}`));
+  let user = message.mentions.users.first();
+  let modlog = message.guild.channels.find('name', 'mod-log');
+  if (!modlog) return message.reply('I cannot find a mod-log channel');
+  if (reason.length < 1) return message.reply('You must supply a user and reason for the kick.');
+  if (message.mentions.users.size < 1) return message.reply('You must mention someone to kick them.').catch(console.error);
+ message.channel.sendMessage(user)
+ message.delete();
+  if (!message.guild.member(user).kickable) return message.reply('I cannot kick that member');
+  message.guild.member(user).kick();
 
-      const embed = new Discord.RichEmbed()
-      .setAuthor(message.author.username)
-      .setTitle('User Banned')
-      .setColor(0x32CD32)
-      .setDescription(user.username + " has been banned by " + `**${message.author.username}** `)
-      .setThumbnail("http://oi66.tinypic.com/2zeecu1.jpg")
-      .addField('Reason', reason);
-      message.channel.sendEmbed(embed);
+  const embed = new Discord.RichEmbed()
+  .setAuthor(message.author.username)
+  .setTitle('User Kicked')
+  .setColor(0x32CD32)
+  .setDescription(user.username + " has been kicked by " + `**${message.author.username}** `)
+  .setThumbnail("http://oi66.tinypic.com/2zeecu1.jpg")
+  message.channel.sendEmbed(embed);
+  return bot.channels.get(modlog.id).sendEmbed(embed);
   }
+ }
+
+ if (command === "warn") {
+  if (message.member.hasPermission("ADMINISTRATOR")) {
+   let reason = args.slice(1).join(' ');
+  let user = message.mentions.users.first();
+  let modlog = message.guild.channels.find('name', 'mod-logs');
+  if (!modlog) return message.reply('I cannot find a mod-logs channel');
+  if (reason.length < 1) return message.reply('You must supply a reason for the warning.');
+  if (message.mentions.users.size < 1) return message.reply('You must mention someone to warn them.').catch(console.error);
+  message.channel.sendMessage(user)
+  const embed = new Discord.RichEmbed()
+  .setAuthor(message.author.username)
+  .setTitle('Warning Issued')
+  .setColor(0x32CD32)
+  .setDescription(user.username + " has been warned by " + `**${message.author.username}** ` + "\nWarnings expire after **7 days**. \nPlease familiarize yourself with the \nserver rules and warning thresholds.")
+  .setThumbnail("http://oi66.tinypic.com/2zeecu1.jpg")
+  .addField('Reason', reason);
+  message.delete().catch(O_o=>{});
+  message.channel.send(`${member.user}`)
+  message.channel.sendEmbed(embed);
+  return bot.channels.get(modlog.id).sendEmbed(embed);
+  }
+}
+
+if (command === "ban") {
+  if (message.member.hasPermission("BAN_MEMBERS")) {
+  let reason = args.slice(1).join(' ');
+  let user = message.mentions.users.first();
+  let modlog = message.guild.channels.find('name', 'mod-log');
+  if (!modlog) return message.reply('I cannot find a mod-log channel');
+  if (reason.length < 1) return message.reply('You must supply a reason for the ban.');
+  if (message.mentions.users.size < 1) return message.reply('You must mention someone to ban them.').catch(console.error);
+
+  if (!message.guild.member(user).bannable) return message.reply('I cannot ban that member');
+  message.guild.ban(user, 2);
+ message.channel.sendMessage(user)
+  message.delete();
+
+  const embed = new Discord.RichEmbed()
+  .setAuthor(message.author.username)
+  .setTitle('User Banned')
+  .setColor(0x32CD32)
+  .setDescription(user.username + " has been banned by " + `**${message.author.username}** `)
+  .setThumbnail("http://oi66.tinypic.com/2zeecu1.jpg")
+  .addField('Reason', reason);
+  message.channel.sendEmbed(embed);
+  return bot.channels.get(modlog.id).sendEmbed(embed);
+  }
+ }
+
+
   
   if(command === "purge") {
     // This command removes all messages from all users in the channel, up to 100.
