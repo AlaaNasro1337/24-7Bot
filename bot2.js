@@ -300,4 +300,4 @@ bot.on("message", function(message) { // when a message is sent
 
 });
 
-bot.login(BOT_TOKEN); // connects to the bot
+client.login(BOT_TOKEN); // connects to the bot
