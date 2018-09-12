@@ -93,21 +93,48 @@ client.on("message", async message => {
     // Now, time for a swift kick in the nuts!
     await member.kick(reason)
       .catch(error => message.reply(`Sorry ${message.author} I couldn't kick because of : ${error}`));
-    message.reply(`${member.user.tag} has been kicked by ${message.author.tag} because: ${reason}`);
+      const embed = new Discord.RichEmbed()
+      .setAuthor(message.author.username)
+      .setTitle('User Kicked')
+      .setColor(0x32CD32)
+      .setDescription(user.username + " has been kicked by " + `**${message.author.username}** `)
+      .setThumbnail("http://oi66.tinypic.com/2zeecu1.jpg")
+      message.channel.sendEmbed(embed);
 
   }
+
+  if (command == "mute") { // creates the command mute
+    if (!message.member.roles.some(r=>["bot-admin"].includes(r.name)) ) return message.reply("Sorry, you do not have the permission to do this!"); // if author has no perms
+    var mutedmember = message.mentions.members.first(); // sets the mentioned user to the var kickedmember
+    if (!mutedmember) return message.reply("Please mention a valid member of this server!") // if there is no kickedmmeber var
+    if (mutedmember.hasPermission("ADMINISTRATOR")) return message.reply("I cannot mute this member!") // if memebr is an admin
+    var mutereasondelete = 10 + mutedmember.user.id.length //sets the length of the kickreasondelete
+    var mutereason = message.content.substring(mutereasondelete).split(" "); // deletes the first letters until it reaches the reason
+    var mutereason = mutereason.join(" "); // joins the list kickreason into one line
+    if (!mutereason) return message.reply("Please indicate a reason for the mute!") // if no reason
+    mutedmember.addRole(mutedrole) //if reason, kick
+        .catch(error => message.reply(`Sorry ${message.author} I couldn't mute because of : ${error}`)); //if error, display error
+    message.reply(`${mutedmember.user} has been muted by ${message.author} because: ${mutereason}`); // sends a message saying he was kicked
+}
+
+if (command == "unmute") { // creates the command unmute
+    if (!message.member.roles.some(r=>["bot-admin"].includes(r.name)) ) return message.reply("Sorry, you do not have the permission to do this!"); // if author has no perms
+    var unmutedmember = message.mentions.members.first(); // sets the mentioned user to the var kickedmember
+    if (!unmutedmember) return message.reply("Please mention a valid member of this server!") // if there is no kickedmmeber var
+    unmutedmember.removeRole(mutedrole) //if reason, kick
+        .catch(error => message.reply(`Sorry ${message.author} I couldn't mute because of : ${error}`)); //if error, display error
+    message.reply(`${unmutedmember.user} has been unmuted by ${message.author}!`); // sends a message saying he was kicked
+}
+
+
   if (command === "help") { // creates a command *help
     var embedhelpmember = new Discord.RichEmbed() // sets a embed box to the variable embedhelpmember
         .setTitle("**Help Center**\n") // sets the title to List of Commands
         .addField(" - help", "Displays this message (Correct usage: c-help)") // sets the first field to explain the command *help
         .addField(" - servercount", "Displays the current ammount of servers im in. (Correct usage: c-servercount)") // sets the first field to explain the command *help
         .addField(" - myinfo", "Tells info about you :grin:") // sets the field information about the command *info
-        .addField(" - prefix", "Displays my default prefix") // sets the field information about the command *info
         .addField(" - ping", "Tests the bots ping (Correct usage: c-ping)") // sets the second field to explain the command *ping
-        .addField(" - roll", "Rolls a random number from 1-100! (Correct usage: c-roll)") // sets the field to the 8ball command
-        .addField(" - 8ball", "Answers to all of your questions! (Correct usage: c-8ball [question])") // sets the field to the 8ball command
-        .addField("Need Extra Help?", "Join the Official server of my owner: https://discord.gg/M262n2z.")
-        .setThumbnail("https://cdn.pixabay.com/photo/2013/07/12/18/09/help-153094_960_720.png")
+        .setThumbnail("http://oi66.tinypic.com/2zeecu1.jpg")
         .setColor("0000ff") // sets the color of the embed box to orange
         .setFooter("You need help, do you?") // sets the footer to "You need help, do you?"
     var embedhelpadmin = new Discord.RichEmbed() // sets a embed box to the var embedhelpadmin
@@ -124,6 +151,37 @@ client.on("message", async message => {
     message.channel.send(embedhelpmember); // sends the embed box "embedhelpmember" to the chatif
     if(message.member.roles.some(r=>["Server Moderators"].includes(r.name)) ) return message.channel.send(embedhelpadmin); // if member is a botadmin, display this too
 }
+
+if (command == "info") { // creates the command *info
+  message.channel.send(`Hey! My name is GalaxyBot and I'm here to assist you! You can do c-help to see all of my commands! If you have any problems with the me, you can contact an my owner.`) // gives u info
+}
+
+
+if (command === "myinfo") {
+
+  let embed = new Discord.RichEmbed()
+  .setAuthor(message.author.username)
+  .setDescription("This is **_YOUR_** info!")
+  .setColor("0x008B8B")
+  .addField("Username", `${message.author.username}#${message.author.discriminator}`)
+  .addField("ID", message.author.id)
+  .addField("Created on/at", message.author.createdAt)
+
+  message.channel.sendEmbed(embed);
+ }
+
+ if (command === "servercount") {
+
+   let embed = new Discord.RichEmbed()
+   .setTitle("Server Count")
+   .setColor("00ff00")
+   .setDescription("I am currently in " + bot.guilds.size + " discord servers!")
+
+  message.channel.sendEmbed(embed);
+ }
+
+
+
   if(command === "ban") {
     // Most of this command is identical to kick, except that here we'll only let admins do it.
     // In the real world mods could ban too, but this is just an example, right? ;)
@@ -141,7 +199,15 @@ client.on("message", async message => {
     
     await member.ban(reason)
       .catch(error => message.reply(`Sorry ${message.author} I couldn't ban because of : ${error}`));
-    message.reply(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`);
+
+      const embed = new Discord.RichEmbed()
+      .setAuthor(message.author.username)
+      .setTitle('User Banned')
+      .setColor(0x32CD32)
+      .setDescription(user.username + " has been banned by " + `**${message.author.username}** `)
+      .setThumbnail("http://oi66.tinypic.com/2zeecu1.jpg")
+      .addField('Reason', reason);
+      message.channel.sendEmbed(embed);
   }
   
   if(command === "purge") {
