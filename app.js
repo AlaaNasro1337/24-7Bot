@@ -194,12 +194,29 @@ const embed = new Discord.RichEmbed()
 if (!message.guild.member(client.user).hasPermission('MANAGE_ROLES_OR_PERMISSIONS')) return message.reply('** لا يوجد لدي برمشن Manage Roles **').catch(console.error);
 
 if (message.guild.member(user).roles.has(muteRole.id)) {
- return message.reply("** Member muted  **").catch(console.error);
+ return message.reply("** ALREADY MUTED  **").catch(console.error);
 } else {
 message.guild.member(user).addRole(muteRole).then(() => {
-  return message.reply("** Muted **").catch(console.error);
-});
+  
+  return message.reply("**User Muted :**" + user.username + "**By**" + message.author).catch(console.error);
+}); 
 }
+}
+
+if (command === "add.t") {
+  if (!message.member.hasPermission('MANAGE_CHANNELS')) return message.reply(" `MANAGE_CHANNELS`:laughing::laughing:ليس لديك صلاحية:laughing::laughing: ");
+let args = message.content.split(" ").slice(1);
+message.guild.createChannel(args.join(' '), 'text');
+message.channel.sendMessage('✅ **Text Channel Created** ✅ ').then(message => {message.delete(10000)});
+
+}
+
+if (command === "add.v") {
+  if (!message.member.hasPermission('MANAGE_CHANNELS')) return message.reply(" `MANAGE_CHANNELS` :laughing::laughing:ليس لديك صلاحية:laughing::laughing: ");
+let args = message.content.split(" ").slice(1);
+message.guild.createChannel(args.join(' '), 'voice');
+message.channel.sendMessage('✅ **Voice Channel Created** ✅ ').then(message => {message.delete(10000)});
+
 }
 
 if (command === "ban") {
@@ -238,7 +255,7 @@ if (command == "roleadd") {
   let MRole = message.content.split(" ").slice(2).join(" ");
   if(!MRole)return message.reply("Role name !").then(msg => {msg.delete(5000)});
   message.guild.member(user).addRole(message.guild.roles.find("name", MRole));
-  message.reply('*** Done :white_check_mark:  ***').then(msg => {msg.delete(10000)});
+  message.reply('*** Role Added! :white_check_mark:  ***').then(msg => {msg.delete(10000)});
   }
 
   if (command == "roledel") {
@@ -250,10 +267,10 @@ if (command == "roleadd") {
     let MRole = message.content.split(" ").slice(2).join(" ");
     if(!MRole)return message.reply("Role name !").then(msg => {msg.delete(5000)});
     message.guild.member(user).removeRole(message.guild.roles.find("name", MRole));
-    message.reply('*** Done :white_check_mark:  ***').then(msg => {msg.delete(10000)});
+    message.reply('*** Role Deleted! :white_check_mark:  ***').then(msg => {msg.delete(10000)});
     }
 
-if (command === prefix + "unmute") {
+if (command === "unmute") {
   if (!message.member.hasPermission('MANAGE_ROLES')) return message.reply("** لا يوجد لديك برمشن 'Manage Roles' **").catch(console.error);
 let user = message.mentions.users.first();
 let modlog = client.channels.find('name', 'mute-log');
@@ -270,10 +287,10 @@ const embed = new Discord.RichEmbed()
 if (!message.guild.member(client.user).hasPermission('MANAGE_ROLES_OR_PERMISSIONS')) return message.reply('** Need a Permission [`Manage Roles`] **').catch(console.error);
 
 if (message.guild.member(user).removeRole(muteRole.id)) {
-return message.reply("** UnMuted  .. **").catch(console.error);
+return message.reply("** ALREADY UNMUTED **").catch(console.error);
 } else {
 message.guild.member(user).removeRole(muteRole).then(() => {
-return message.reply("** UnMuted **").catch(console.error);
+  return message.reply("**User Unmuted :**" + user.username + "**By**" + message.author).catch(console.error);
 });
 }
 
