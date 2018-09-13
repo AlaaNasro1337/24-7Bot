@@ -123,7 +123,7 @@ if (command === "myinfo") {
  }
 
  if (command === "servercount") {
-
+  
    let embed = new Discord.RichEmbed()
    .setTitle("Server Count")
    .setColor("00ff00")
@@ -138,8 +138,9 @@ if(!message.guild.member(message.author).hasPermission("KICK_MEMBERS")) return m
 if(!message.guild.member(client.user).hasPermission("KICK_MEMBERS")) return message.reply("**I Don't Have ` KICK_MEMBERS ` Permission**");
 let user = message.mentions.users.first();
 let reason = message.content.split(" ").slice(2).join(" ");
+let kicklog = message.guild.channels.find('name', 'kick-log');
 /*let b5bzlog = client.channels.find("name", "5bz-log");
-
+ 
 if(!b5bzlog) return message.reply("I've detected that this server doesn't have a 5bz-log text channel.");*/
 if (message.mentions.users.size < 1) return message.reply("**Please mention someone**");
 if(!reason) return message.reply ("**Type the reason or type `none` for no reason **");
@@ -155,9 +156,9 @@ const kickembed = new Discord.RichEmbed()
 .addField("**User:**",  '**[ ' + `${user.tag}` + ' ]**')
 .addField("**By:**", '**[ ' + `${message.author.tag}` + ' ]**')
 .addField("**Reason:**", '**[ ' + `${reason}` + ' ]**')
-message.channel.send({
+message.channels.get(kicklog.id).send({
 embed : kickembed
-}).then(message => {message.delete(10000)});
+})
 }
 
  
@@ -177,10 +178,15 @@ if(command=== "add.r") {
   
 
   if (command === "mute") {
+   
     if (!message.member.hasPermission('MANAGE_ROLES')) return message.reply("** There is no 'Manage Roles' with you **").catch(console.error);
-let user = message.mentions.users.first();
-let modlog = client.channels.find('name', 'mute-log');
+    let reason = args.slice(1).join(' ');
+    let user = message.mentions.users.first();
+
 let muteRole = client.guilds.get(message.guild.id).roles.find('name', 'Muted');
+let mutelog = message.guild.channels.find('name', 'mute-log');
+if (!mutelog) return message.reply('I cannot find a mute-log channel');
+if (reason.length < 1) return message.reply('You must supply a user and reason for the kick.');
 if (!muteRole) return message.reply("** There is no role called 'Muted' **").then(message.channel.sendMessage('c-add.r Muted')).then(message.channel.sendMessage('Try again')).catch(console.error);
 if (message.mentions.users.size < 1) return message.reply('**Mention some one please**').catch(console.error);
 
@@ -198,7 +204,15 @@ if (message.guild.member(user).roles.has(muteRole.id)) {
 } else {
 message.guild.member(user).addRole(muteRole).then(() => {
   
-  return message.reply("**User Muted :**" + user.username + "**By**" + message.author).catch(console.error);
+
+  const embed = new Discord.RichEmbed()
+  .setAuthor(message.author.username)
+  .setTitle('User Muted')
+  .setColor(0x32CD32)
+  .setDescription(user.username + " has been muted by " + `**${message.author.username}** `)
+  .setThumbnail("http://oi66.tinypic.com/2zeecu1.jpg")
+  message.channels.get(mutelog.id).sendEmbed(embed);
+ 
 }); 
 }
 }
