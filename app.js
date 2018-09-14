@@ -97,13 +97,11 @@ client.on("message", async message => {
     if(message.member.roles.some(r=>["Server Moderators"].includes(r.name)) ) return message.channel.send(embedhelpadmin); // if member is a botadmin, display this too
 }
 
-if (command === "info") { // creates the command *info
-  message.channel.send(`Hey! My name is CupidRoom and I'm here to assist you! You can do c-help to see all of my commands! If you have any problems with the me, you can contact an my owner.`) // gives u info
-}
 
 if (command === "bans") {
   message.guild.fetchBans()
-  .then(bans => message.channel.send('The server has banned ' + `${bans.size}` + ' Person'))
+
+  .then(bans => message.channel.send('**The server has banned** ' + `${bans.size}` + ' **Person**'))
 .catch(console.error);
 }
 
@@ -113,7 +111,7 @@ if (command === "myinfo") {
 
   let embed = new Discord.RichEmbed()
   .setAuthor(message.author.username)
-  .setDescription("This is **_YOUR_** info!")
+  .setDescription("This is" +""+ message.author.username + "'s" +""+ "info!")
   .setColor("0x008B8B")
   .addField("Username", `${message.author.username}#${message.author.discriminator}`)
   .addField("ID", message.author.id)
@@ -122,15 +120,8 @@ if (command === "myinfo") {
   message.channel.sendEmbed(embed);
  }
 
- if (command === "servercount") {
-  
-   let embed = new Discord.RichEmbed()
-   .setTitle("Server Count")
-   .setColor("00ff00")
-   .setDescription("I am currently in " + bot.guilds.size + " discord servers!")
+ 
 
-  message.channel.sendEmbed(embed);
- }
  if (command == "kick") {
   if(!message.channel.guild) return message.reply('** This command only for servers**');
 
@@ -138,9 +129,8 @@ if(!message.guild.member(message.author).hasPermission("KICK_MEMBERS")) return m
 if(!message.guild.member(client.user).hasPermission("KICK_MEMBERS")) return message.reply("**I Don't Have ` KICK_MEMBERS ` Permission**");
 let user = message.mentions.users.first();
 let reason = message.content.split(" ").slice(2).join(" ");
-let kicklog = message.guild.channels.find('name', 'kick-log');
 /*let b5bzlog = client.channels.find("name", "5bz-log");
- 
+
 if(!b5bzlog) return message.reply("I've detected that this server doesn't have a 5bz-log text channel.");*/
 if (message.mentions.users.size < 1) return message.reply("**Please mention someone**");
 if(!reason) return message.reply ("**Type the reason or type `none` for no reason **");
@@ -156,12 +146,15 @@ const kickembed = new Discord.RichEmbed()
 .addField("**User:**",  '**[ ' + `${user.tag}` + ' ]**')
 .addField("**By:**", '**[ ' + `${message.author.tag}` + ' ]**')
 .addField("**Reason:**", '**[ ' + `${reason}` + ' ]**')
-message.channels.get(kicklog.id).send({
+message.channel.send({
 embed : kickembed
-})
+}).then(message => {message.delete(10000)});
 }
 
+
+
  
+
 
 if(command=== "add.r") {
   if(!message.channel.guild) return message.reply('**Commands in the server**').catch(console.error);
@@ -172,56 +165,29 @@ if(command=== "add.r") {
       color : "RANDOM",
       permissions : [1]
     }).then(function(role){
-      message.addRole(role).then(message.channel.sendMessage('**Done :white_check_mark:**')).catch(console.error).then(message => {message.delete(10000)});
+
+
+      let embed = new Discord.RichEmbed()
+      .setAuthor(message.author.username)
+      .setDescription(message.author.username + " Has Created: " + role)
+      .setColor("0x008B8B")
+      message.addRole(role).then(message.channel.sendEmbed(embed).catch(console.error).then(message => {message.delete(10000)});
     })
   }
   
 
-  if (command === "mute") {
-   
-    if (!message.member.hasPermission('MANAGE_ROLES')) return message.reply("** There is no 'Manage Roles' with you **").catch(console.error);
-    let reason = args.slice(1).join(' ');
-    let user = message.mentions.users.first();
-
-let muteRole = client.guilds.get(message.guild.id).roles.find('name', 'Muted');
-let mutelog = message.guild.channels.find('name', 'mute-log');
-if (!mutelog) return message.reply('I cannot find a mute-log channel');
-if (reason.length < 1) return message.reply('You must supply a user and reason for the kick.');
-if (!muteRole) return message.reply("** There is no role called 'Muted' **").then(message.channel.sendMessage('c-add.r Muted')).then(message.channel.sendMessage('Try again')).catch(console.error);
-if (message.mentions.users.size < 1) return message.reply('**Mention some one please**').catch(console.error);
-
-const embed = new Discord.RichEmbed()
-.setColor(0x00AE86)
-.setTimestamp()
-.addField('Usage:', 'mute/unmute')
-.addField('Muted:', `${user.username}#${user.discriminator} (${user.id})`)
-.addField('By:', `${message.author.username}#${message.author.discriminator}`)
-
-if (!message.guild.member(client.user).hasPermission('MANAGE_ROLES_OR_PERMISSIONS')) return message.reply('** لا يوجد لدي برمشن Manage Roles **').catch(console.error);
-
-if (message.guild.member(user).roles.has(muteRole.id)) {
- return message.reply("** ALREADY MUTED  **").catch(console.error);
-} else {
-message.guild.member(user).addRole(muteRole).then(() => {
-  
-
-  const embed = new Discord.RichEmbed()
-  .setAuthor(message.author.username)
-  .setTitle('User Muted')
-  .setColor(0x32CD32)
-  .setDescription(user.username + " has been muted by " + `**${message.author.username}** `)
-  .setThumbnail("http://oi66.tinypic.com/2zeecu1.jpg")
-  message.channels.get(mutelog.id).sendEmbed(embed);
  
-}); 
-}
-}
 
 if (command === "add.t") {
   if (!message.member.hasPermission('MANAGE_CHANNELS')) return message.reply(" `MANAGE_CHANNELS`:laughing::laughing:ليس لديك صلاحية:laughing::laughing: ");
 let args = message.content.split(" ").slice(1);
 message.guild.createChannel(args.join(' '), 'text');
-message.channel.sendMessage('✅ **Text Channel Created** ✅ ').then(message => {message.delete(10000)});
+
+let embed = new Discord.RichEmbed()
+.setAuthor(message.author.username)
+.setDescription(message.author.username + " Has Created A Text Channel")
+.setColor("0x008B8B")
+message.channel.sendEmbed(embed).then(message => {message.delete(10000)});
 
 }
 
@@ -229,36 +195,14 @@ if (command === "add.v") {
   if (!message.member.hasPermission('MANAGE_CHANNELS')) return message.reply(" `MANAGE_CHANNELS` :laughing::laughing:ليس لديك صلاحية:laughing::laughing: ");
 let args = message.content.split(" ").slice(1);
 message.guild.createChannel(args.join(' '), 'voice');
-message.channel.sendMessage('✅ **Voice Channel Created** ✅ ').then(message => {message.delete(10000)});
-
+let embed = new Discord.RichEmbed()
+.setAuthor(message.author.username)
+.setDescription(message.author.username + " Has Created A Voice Channel")
+.setColor("0x008B8B")
+message.channel.sendEmbed(embed).then(message => {message.delete(10000)});
 }
 
-if (command === "ban") {
-  if (message.member.hasPermission("BAN_MEMBERS")) {
-  let reason = args.slice(1).join(' ');
-  let user = message.mentions.users.first();
-  let modlog = message.guild.channels.find('name', 'mod-log');
-  if (!modlog) return message.reply('I cannot find a mod-log channel');
-  if (reason.length < 1) return message.reply('You must supply a reason for the ban.');
-  if (message.mentions.users.size < 1) return message.reply('You must mention someone to ban them.').catch(console.error);
 
-  if (!message.guild.member(user).bannable) return message.reply('I cannot ban that member');
-  message.guild.ban(user, 2);
- message.channel.sendMessage(user)
-  message.delete();
-
-  const embed = new Discord.RichEmbed()
-  .setAuthor(message.author.username)
-  .setTitle('User Banned')
-  .setColor(0x32CD32)
-  .setDescription(user.username + " has been banned by " + `**${message.author.username}** `)
-  .setThumbnail("http://oi66.tinypic.com/2zeecu1.jpg")
-  .addField('Reason', reason);
-  message.channel.sendEmbed(embed);
-  return bot.channels.get(modlog.id).sendEmbed(embed);
-  }
- }
- 
 
 if (command == "roleadd") {
   if (!message.channel.guild) return;
@@ -269,6 +213,7 @@ if (command == "roleadd") {
   let MRole = message.content.split(" ").slice(2).join(" ");
   if(!MRole)return message.reply("Role name !").then(msg => {msg.delete(5000)});
   message.guild.member(user).addRole(message.guild.roles.find("name", MRole));
+
   message.reply('*** Role Added! :white_check_mark:  ***').then(msg => {msg.delete(10000)});
   }
 
@@ -283,6 +228,47 @@ if (command == "roleadd") {
     message.guild.member(user).removeRole(message.guild.roles.find("name", MRole));
     message.reply('*** Role Deleted! :white_check_mark:  ***').then(msg => {msg.delete(10000)});
     }
+
+
+
+    if (command ==="mute") {
+      if (!message.member.hasPermission('MANAGE_ROLES')) return message.reply("** There is no 'Manage Roles' with you **").catch(console.error);
+let user = message.mentions.users.first();
+let modlog = client.channels.find('name', 'mute-log');
+let muteRole = client.guilds.get(message.guild.id).roles.find('name', 'Muted');
+if (!muteRole) return message.reply("** There is no role called 'Muted' **").then(message.channel.sendMessage('c-add.r Muted')).then(message.channel.sendMessage('Try again')).catch(console.error);
+if (message.mentions.users.size < 1) return message.reply('**Mention some one please**').catch(console.error);
+
+
+ if (!message.guild.member(client.user).hasPermission('MANAGE_ROLES_OR_PERMISSIONS')) return message.reply('** لا يوجد لدي برمشن Manage Roles **').catch(console.error);
+
+if (message.guild.member(user).roles.has(muteRole.id)) {
+  
+  const embed = new Discord.RichEmbed()
+.setColor(0x00AE86)
+.setTimestamp()
+.addField('Muted:', `${user.username}#${user.discriminator} (${user.id})`)
+.addField('By:', `${message.author.username}#${message.author.discriminator}`)
+return message.sendEmbed(embed).catch(console.error);
+
+
+} else {
+
+  
+const embed = new Discord.RichEmbed()
+.setColor(0x00AE86)
+.setTimestamp()
+.addField('Muted:', `${user.username}#${user.discriminator} (${user.id})`)
+.addField('By:', `${message.author.username}#${message.author.discriminator}`)
+
+
+  message.guild.member(user).addRole(muteRole).then(() => {
+    return message.sendEmbed(embed).catch(console.error);
+  });
+}
+
+}
+
 
 if (command === "unmute") {
   if (!message.member.hasPermission('MANAGE_ROLES')) return message.reply("** لا يوجد لديك برمشن 'Manage Roles' **").catch(console.error);
@@ -301,15 +287,31 @@ const embed = new Discord.RichEmbed()
 if (!message.guild.member(client.user).hasPermission('MANAGE_ROLES_OR_PERMISSIONS')) return message.reply('** Need a Permission [`Manage Roles`] **').catch(console.error);
 
 if (message.guild.member(user).removeRole(muteRole.id)) {
-return message.reply("** ALREADY UNMUTED **").catch(console.error);
+    
+  const embed = new Discord.RichEmbed()
+  .setColor(0x00AE86)
+  .setTimestamp()
+  .addField('Unmuted:', `${user.username}#${user.discriminator} (${user.id})`)
+  .addField('By:', `${message.author.username}#${message.author.discriminator}`)
+  
+  
+  return message.sendEmbed(embed).catch(console.error);
 } else {
 message.guild.member(user).removeRole(muteRole).then(() => {
-  return message.reply("**User Unmuted :**" + user.username + "**By**" + message.author).catch(console.error);
+
+    
+const embed = new Discord.RichEmbed()
+.setColor(0x00AE86)
+.setTimestamp()
+.addField('Unmuted:', `${user.username}#${user.discriminator} (${user.id})`)
+.addField('By:', `${message.author.username}#${message.author.discriminator}`)
+
+
+return message.sendEmbed(embed).catch(console.error);
 });
 }
 
-};
-
+}
 
 
   
